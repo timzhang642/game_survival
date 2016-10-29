@@ -100,7 +100,10 @@ GameState.prototype.sensor_on_food = function(agent, foods) {
 // sensor to detect the distance and angle of the other agent
 GameState.prototype.sensor_on_agent = function(agent1, agent2) {
     dis_between_agents =  Math.sqrt((agent1.x-agent2.x)**2+(agent1.y-agent2.y)**2)
-    return dis_between_agents
+    
+    cos_from_agent2_to_agent1 = (agent2.x-agent1.x)/dis_between_agents; // cosine of angle from agent2 to agent1
+    
+    return [dis_between_agents,cos_from_agent2_to_agent1]
 }
 
 // The update() method is called every frame
@@ -110,7 +113,8 @@ GameState.prototype.update = function() {
     this.bitmap.context.clearRect(0, 0, this.game.width, this.game.height);
     a1_food_dis = this.sensor_on_food(agent1,foods);
     a2_food_dis = this.sensor_on_food(agent2,foods);
-    dis_between_agents= this.sensor_on_agent(agent1,agent2);
+    dis_between_agents = this.sensor_on_agent(agent1,agent2)[0];
+    cos_from_agent2_to_agent1 = this.sensor_on_agent(agent1,agent2)[1];
     // This just tells the engine it should update the texture cache
     this.bitmap.dirty = true;
     
@@ -121,6 +125,7 @@ GameState.prototype.update = function() {
     $('#agent1_food_dis').html("Distance between Agent1 and closest food point: "+a1_food_dis.toFixed(2));
     $('#agent2_food_dis').html("Distance between Agent2 and closest food point: "+a2_food_dis.toFixed(2));
     $('#agent_dis').html("Distance between Agent1 and Agent2: "+dis_between_agents.toFixed(2));
+    $('#agent_cosine').html("Cosine from Agent2 to Agent1: "+cos_from_agent2_to_agent1.toFixed(2));
     
     
     // agent1 manual control using arrows
